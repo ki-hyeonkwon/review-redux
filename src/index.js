@@ -1,5 +1,11 @@
 import { createStore } from "redux";
 
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
+import { Provider } from "react-redux";
+import store from "./store";
+
 //// counter구현 ////
 
 const add = document.getElementById("add");
@@ -85,19 +91,20 @@ const reducer = (state = [], action) => {
 };
 
 //스토어 생성
-const store = createStore(reducer);
+const toDosStore = createStore(reducer);
 
+//dispatch
 const dispatchAddToDo = text => {
-  store.dispatch(addToDo(text));
+  toDosStore.dispatch(addToDo(text));
 };
 const dispatchDeleteToDo = e => {
   const id = parseInt(e.target.parentNode.id);
-  store.dispatch(deleteToDo(id));
+  toDosStore.dispatch(deleteToDo(id));
 };
 
 //subscribe의 listener
 const paintToDos = () => {
-  const toDos = store.getState();
+  const toDos = toDosStore.getState();
   ul.innerHTML = "";
   toDos.forEach(toDo => {
     const li = document.createElement("li");
@@ -111,7 +118,7 @@ const paintToDos = () => {
   });
 };
 
-store.subscribe(paintToDos);
+toDosStore.subscribe(paintToDos);
 
 const onSubmit = e => {
   e.preventDefault();
@@ -121,3 +128,11 @@ const onSubmit = e => {
 };
 
 form.addEventListener("submit", onSubmit);
+
+//// React Redux
+ReactDOM.render(
+  <Provider store={store}>
+    <App></App>
+  </Provider>,
+  document.getElementById("root")
+);
